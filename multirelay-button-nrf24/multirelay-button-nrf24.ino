@@ -19,6 +19,7 @@
  *******************************
  *
  * REVISION HISTORY
+ * Based on the MySensors RelayActuator Example Sketch credited below:
  * Version 1.0 - Henrik EKblad
  * Contribution by a-lurker and Anticimex,
  * Contribution by Norbert Truchsess <norbert.truchsess@t-online.de>
