@@ -75,20 +75,20 @@
 // Enables and select radio type (if attached)
 #define MY_RADIO_NRF24
 //#define MY_RADIO_RFM69
-//#define MY_RF24_CE_PIN 49
-//#define MY_RF24_CS_PIN 53
+#define MY_RF24_CE_PIN 5  //  Board pin 16  IO 1
+#define MY_RF24_CS_PIN 4  //  Board pin 15  IO 3
 
-//#define MY_GATEWAY_ESP8266
+#define MY_GATEWAY_ESP8266
 
-//#define MY_ESP8266_SSID "nelnet"
-//#define MY_ESP8266_PASSWORD "56seven8"
+#define MY_ESP8266_SSID "nelnet"
+#define MY_ESP8266_PASSWORD "56seven8"
 
 // Enable UDP communication
 //#define MY_USE_UDP
 
 // Set the hostname for the WiFi Client. This is the hostname
 // it will pass to the DHCP server if not static
-//#define MY_ESP8266_HOSTNAME "sensor-gateway"
+#define MY_ESP8266_HOSTNAME "sensor-gateway"
 
 // Enable MY_IP_ADDRESS here if you want a static ip address (no DHCP)
 //#define MY_IP_ADDRESS 192,168,178,87
@@ -98,10 +98,10 @@
 //#define MY_IP_SUBNET_ADDRESS 255,255,255,0
 
 // The port to keep open on node server mode
-//#define MY_PORT 5003
+#define MY_PORT 5003
 
 // How many clients should be able to connect to this gateway (default 1)
-//#define MY_GATEWAY_MAX_CLIENTS 2
+#define MY_GATEWAY_MAX_CLIENTS 2
 
 // Controller ip address. Enables client mode (default is "server" mode).
 // Also enable this if MY_USE_UDP is used and you want sensor data sent somewhere.
@@ -113,9 +113,9 @@
 // Enable Inclusion mode button on gateway
 // #define MY_INCLUSION_BUTTON_FEATURE
 // Set inclusion mode duration (in seconds)
-#define MY_INCLUSION_MODE_DURATION 60
+//#define MY_INCLUSION_MODE_DURATION 60
 // Digital pin used for inclusion mode button
-#define MY_INCLUSION_MODE_BUTTON_PIN  3
+//#define MY_INCLUSION_MODE_BUTTON_PIN  3
 
 
 // Set blinking period
@@ -127,65 +127,76 @@
 //#define MY_DEFAULT_RX_LED_PIN  16  // Receive led pin
 //#define MY_DEFAULT_TX_LED_PIN  16  // the PCB, on board LED
 
-//#if defined(MY_USE_UDP)
-//#include <WiFiUdp.h>
-//#endif
+#if defined(MY_USE_UDP)
+#include <WiFiUdp.h>
+#endif
 
-//#include <ESP8266WiFi.h>
-
+#include <ESP8266WiFi.h>
+#include <SPI.h>
 #include <MySensors.h>
-#include <Bounce2.h>
+//#include <Bounce2.h>
 
-#define RELAY_PIN  7  // Arduino Digital I/O pin number for relay 
-#define BUTTON_PIN  8  // Arduino Digital I/O pin number for button 
+/*
+#define RELAY_PIN  0  // Arduino Digital I/O pin number for relay 
+#define BUTTON_PIN  2  // Arduino Digital I/O pin number for button 
 #define CHILD_ID 1   // Id of the sensor child
 #define RELAY_ON 1
 #define RELAY_OFF 0
-#define WRITE_RELAY_ON 1
-#define WRITE_RELAY_OFF 0
 
 Bounce debouncer = Bounce(); 
 int oldValue=0;
 bool state;
 bool initialValueSent = false;
+*/
 
-MyMessage msg(CHILD_ID,V_LIGHT);
+//MyMessage msg(CHILD_ID,V_LIGHT);
 
 void setup()
 {
+  /*
   // Setup the button
-  pinMode(BUTTON_PIN,INPUT_PULLUP);
-
+  pinMode(BUTTON_PIN,INPUT);
+  // Activate internal pull-up
   digitalWrite(BUTTON_PIN,HIGH);
+  */
 
+  /*
   // After setting up the button, setup debouncer
   debouncer.attach(BUTTON_PIN);
   debouncer.interval(5);
+  */
 
+  /*
   // Make sure relays are off when starting up
-  digitalWrite(RELAY_PIN, WRITE_RELAY_OFF);
+  digitalWrite(RELAY_PIN, RELAY_OFF);
   // Then set relay pins in output mode
   pinMode(RELAY_PIN, OUTPUT);  
+  */
 
+  /*
   // Set relay to last known state (using eeprom storage) 
   state = loadState(CHILD_ID);
-  digitalWrite(RELAY_PIN, state?WRITE_RELAY_ON:WRITE_RELAY_OFF);
+  digitalWrite(RELAY_PIN, state?RELAY_ON:RELAY_OFF);
+  */
 }
 
 void presentation()
 {
 	// Present locally attached sensors here
+  /*
   // Send the sketch version information to the gateway and Controller
   sendSketchInfo("Relay & Button", "0.1");
 
   // Register all sensors to gw (they will be created as child devices)
-  present(CHILD_ID, S_BINARY);
+  present(CHILD_ID, S_LIGHT);
+  */
 }
 
 
 void loop()
 {
 	// Send locally attached sensors data here
+  /*
   if (!initialValueSent) {
     Serial.println("Sending initial value");
     send(msg.set(state?RELAY_ON:RELAY_OFF));
@@ -193,18 +204,17 @@ void loop()
     request(CHILD_ID, V_STATUS);
     wait(2000, C_SET, V_STATUS);
   }
+  */
 
+  /*
   debouncer.update();
   // Get the update value
-  int value = debouncer.rose();
-  if (value != oldValue  && value==0) {
-      Serial.print("Button Press.  Old state: ");
-      Serial.print(state);
-      state = !state;
-      writestate(state);
-      //digitalWrite(RELAY_PIN, state?WRITE_RELAY_ON:WRITE_RELAY_OFF);
+  int value = debouncer.read();
+  if (value != oldValue && value==0) {
+      send(msg.set(state?false:true), true); // Send new state and request ack back
   }
   oldValue = value;
+  */
 }
 
 void receive(const MyMessage &message) {
@@ -212,24 +222,37 @@ void receive(const MyMessage &message) {
   if (message.isAck()) {
      Serial.println("This is an ack from gateway");
   }
+  /*
   if (message.type == V_STATUS) {
     if (!initialValueSent) {
       Serial.println("Receiving initial value from controller");
       initialValueSent = true;
      }
+
      state = message.getBool();
+     digitalWrite(RELAY_PIN, state?RELAY_ON:RELAY_OFF);
+     // Store state in eeprom
+     saveState(CHILD_ID, state);
+     send(msg.set(state?RELAY_ON:RELAY_OFF));
+     // Write some debug info
      Serial.print("Incoming change for sensor:");
      Serial.print(message.sensor);
-     writestate(state);
-  }
-}
-void writestate(bool newstate) {
-     digitalWrite(RELAY_PIN, newstate?WRITE_RELAY_ON:WRITE_RELAY_OFF);
-     // Store state in eeprom
-     saveState(CHILD_ID, newstate);
-     send(msg.set(newstate?RELAY_ON:RELAY_OFF));
-     // Write some debug info
      Serial.print(", New status: ");
-     Serial.println(newstate);
+     Serial.println(message.getBool());
+  } 
+  if (message.type == V_LIGHT) {
+     // Change relay state
+     state = message.getBool();
+     digitalWrite(RELAY_PIN, state?RELAY_ON:RELAY_OFF);
+     // Store state in eeprom
+     saveState(CHILD_ID, state);
+     send(msg.set(state?RELAY_ON:RELAY_OFF));
+     // Write some debug info
+     Serial.print("Incoming change for sensor:");
+     Serial.print(message.sensor);
+     Serial.print(", New status: ");
+     Serial.println(message.getBool());
+   }
+   */ 
 }
 
