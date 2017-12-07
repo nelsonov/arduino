@@ -85,7 +85,7 @@ SoftwareSerial SoftSerial(SOFTWARE_SERIAL_RX, SOFTWARE_SERIAL_TX); // RX, TX
 // Enable serial gateway
 #define MY_GATEWAY_SERIAL
 //Want Gateway <-> Controller communication over Serial1
-#define MY_SERIALDEVICE Serial
+//#define MY_SERIALDEVICE SoftSerial
 
 // There's no need for a blinding-fast speed when so little is being communicated
 // If doing OTA's, then this speed may need to be reconsidered
