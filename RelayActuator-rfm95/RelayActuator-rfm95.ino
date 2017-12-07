@@ -29,19 +29,32 @@
 
 // Enable debug prints to serial monitor
 #define MY_DEBUG
+#define   MY_SPECIAL_DEBUG
 
 // Enable and select radio type attached
 //#define MY_RADIO_NRF24
 //#define MY_RADIO_RFM69
-#define   RFM95_IRQ_PIN  6
-#define   RFM95_RST_PIN  9
-#define   RFM95_SPI_CS 10
+
+#define   MY_RFM95_FREQUENCY RFM95_915MHZ
+//#define   MY_RFM95_MODEM_CONFIGRUATION RFM95_BW125CR45SF128
+//#define   MY_RFM95_ATC_MODE_DISABLED
+//#define   MY_RFM95_MAX_POWER_LEVEL_DBM 20
+
+//#define   RFM95_IRQ_PIN     6  // library 2.1.1
+#define   RFM95_RST_PIN     9  // library 2.1.1
+#define   RFM95_SPI_CS     10  // library 2.1.1
+#define   MY_RFM95_IRQ_PIN  2  // library 2.2 beta = GPIO 2
+#define   MY_RFM95_IRQ_NUM  0  // library 2.2 beta
+#define   MY_RFM95_RST_PIN  5  // library 2.2 beta
+#define   MY_RFM95_CS_PIN  6  // library 2.2 beta
 #define   MY_RADIO_RFM95
 #define   MY_DEBUG_VERBOSE_RFM95
 
 
 // Enable repeater functionality for this node
-#define MY_REPEATER_FEATURE
+//#define MY_REPEATER_FEATURE
+#define MY_BAUD_RATE 4800
+#define MY_DEBUG_VERBOSE_TRANSPORT
 
 #include <MySensors.h>
 
@@ -50,10 +63,16 @@
 #define RELAY_ON 1  // GPIO value to write to turn on attached relay
 #define RELAY_OFF 0 // GPIO value to write to turn off attached relay
 
+#define CHILD_ID RELAY_1
+bool state = false;
+bool initialValueSent = false;
+
+MyMessage msg(CHILD_ID, V_STATUS);
 
 void before()
 {
 	for (int sensor=1, pin=RELAY_1; sensor<=NUMBER_OF_RELAYS; sensor++, pin++) {
+    present(sensor, S_BINARY);
 		// Then set relay pins in output mode
 		pinMode(pin, OUTPUT);
 		// Set relay to last known state (using eeprom storage)
@@ -69,18 +88,28 @@ void setup()
 void presentation()
 {
 	// Send the sketch version information to the gateway and Controller
-	sendSketchInfo("Relay", "1.0");
+	sendSketchInfo("SerialNodeRelay", "0.1");
 
 	for (int sensor=1, pin=RELAY_1; sensor<=NUMBER_OF_RELAYS; sensor++, pin++) {
 		// Register all sensors to gw (they will be created as child devices)
 		present(sensor, S_BINARY);
+    // Then set relay pins in output mode
+    pinMode(pin, OUTPUT);
+    // Set relay to last known state (using eeprom storage)
+    digitalWrite(pin, loadState(sensor)?RELAY_ON:RELAY_OFF);
 	}
 }
 
 
 void loop()
 {
-
+  if (!initialValueSent) {
+    Serial.println("Sending initial value");
+    send(msg.set(state?RELAY_ON:RELAY_OFF));
+    Serial.println("Requesting initial value from controller");
+    request(CHILD_ID, V_STATUS);
+    wait(2000, C_SET, V_STATUS);
+  }
 }
 
 void receive(const MyMessage &message)

@@ -137,12 +137,12 @@
 #include <Bounce2.h>
 
 #define RELAY_PIN  0  // Arduino Digital I/O pin number for relay 
-#define BUTTON_PIN  15  // Arduino Digital I/O pin number for button 
+//#define BUTTON_PIN  2  // Arduino Digital I/O pin number for button 
 #define CHILD_ID 1   // Id of the sensor child
 #define RELAY_ON 1
 #define RELAY_OFF 0
-#define WRITE_RELAY_ON 0
-#define WRITE_RELAY_OFF 1
+#define WRITE_RELAY_ON 1
+#define WRITE_RELAY_OFF 0
 
 Bounce debouncer = Bounce(); 
 int oldValue=0;
@@ -153,14 +153,14 @@ MyMessage msg(CHILD_ID,V_LIGHT);
 
 void setup()
 {
+#ifdef BUTTON_PIN
   // Setup the button
-  pinMode(BUTTON_PIN,INPUT);
-  // Activate internal pull-up
-  digitalWrite(BUTTON_PIN,HIGH);
+  pinMode(BUTTON_PIN,INPUT_PULLUP);
 
   // After setting up the button, setup debouncer
   debouncer.attach(BUTTON_PIN);
   debouncer.interval(5);
+#endif
 
   // Make sure relays are off when starting up
   digitalWrite(RELAY_PIN, WRITE_RELAY_OFF);
@@ -194,10 +194,11 @@ void loop()
     wait(2000, C_SET, V_STATUS);
   }
 
+#ifdef BUTTON_PIN
   debouncer.update();
   // Get the update value
-  int value = debouncer.rose();
-  if (value != oldValue  && value==0) {
+  int value = debouncer.read();
+  if (value != oldValue  && value==1) {
       Serial.print("Button Press.  Old state: ");
       Serial.print(state);
       state = !state;
@@ -205,6 +206,7 @@ void loop()
       //digitalWrite(RELAY_PIN, state?WRITE_RELAY_ON:WRITE_RELAY_OFF);
   }
   oldValue = value;
+#endif
 }
 
 void receive(const MyMessage &message) {
