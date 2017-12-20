@@ -79,13 +79,13 @@ bool initialLightValueSent   = false;
 bool initialLightLEDValueSent= false;
 int lastLightLEDStatus       = 0;
 float lastTemp               = 0.0;
-int lastLightPct             = 0;
+float lastLightPct           = 0.0;
 const long loopInterval      = 30000; // 1000 = 1 second, 300000 = 5min
 unsigned long previousMillis = 0;
 
 MyMessage msgTemp(TEMP_SENSOR_ID, V_TEMP);
-MyMessage msgLight(TEMP_SENSOR_ID, V_LIGHT_LEVEL);
-MyMessage msgLightLED(TEMP_SENSOR_ID, V_STATUS);
+MyMessage msgLight(LIGHT_SENSOR_ID, V_LIGHT_LEVEL);
+MyMessage msgLightLED(LIGHT_LED_ID, V_STATUS);
 
 // Create the MCP9808 temperature sensor object
 Adafruit_MCP9808 tempsensor = Adafruit_MCP9808();
@@ -125,14 +125,14 @@ void loop()
       getInitialTempValue();
     } else {
       lastTemp=tempRead();
-      send(msgLight.setSensor(TEMP_SENSOR_ID).set(lastTemp,1));
+      send(msgTemp.setSensor(TEMP_SENSOR_ID).set(lastTemp,1));
     }
 
     // Light LED
     if (!initialLightLEDValueSent) {
       getInitialLightLEDValue();
     } else {
-      send(msgLight.setSensor(LIGHT_LED_ID).set(lastLightLEDStatus,1));
+      send(msgLightLED.setSensor(LIGHT_LED_ID).set(lastLightLEDStatus,1));
     }
 
     //Light Sensor
@@ -140,7 +140,7 @@ void loop()
         getInitialLightValue();
     } else {
       lastLightPct=lightRead();
-      send(msgLightLED.setSensor(TEMP_SENSOR_ID).set(lastLightPct,1));
+      send(msgLight.setSensor(LIGHT_SENSOR_ID).set(lastLightPct,1));
     }
   }
 }
@@ -177,19 +177,21 @@ void receive(const MyMessage &message)
   } // else
 } // function
 
-int16_t lightRead (void)
+float lightRead (void)
 {
   int16_t adc0 = 0;
   long sum = 0;
-  int16_t samplelevel = 0;
+  float samplelevel = 0.0;
   int i;
-  int percentval = 0;
+  float percentval = 0.0;
   for (i=0; i < SAMPLE; i++) {
     adc0 = analogRead(LIGHT_ANALOG);
     sum += adc0;
   }
   samplelevel = 1024 - (sum / SAMPLE);
-  percentval = samplelevel / 1024;
+  MY_DEBUGDEVICE.print("Light Sensor: ");
+  MY_DEBUGDEVICE.println(samplelevel);
+  percentval = (samplelevel / 1024.0) * 100.0;
   MY_DEBUGDEVICE.print("Light Sensor: ");
   MY_DEBUGDEVICE.print(percentval);
   MY_DEBUGDEVICE.println("%");
@@ -227,7 +229,7 @@ void getInitialTempValue (void)
 void getInitialLightValue(void)
 {
   MY_DEBUGDEVICE.println("Sending initial light level  value");
-  send(msgLight.set(lastLightPct));
+  send(msgLight.setSensor(LIGHT_SENSOR_ID).set(lastLightPct,1));
   MY_DEBUGDEVICE.println("Requesting initial light level value from controller");
   request(LIGHT_SENSOR_ID, V_LIGHT_LEVEL);
   wait(WAIT_VALUE, C_SET, V_LIGHT_LEVEL);
@@ -235,7 +237,7 @@ void getInitialLightValue(void)
 void getInitialLightLEDValue(void)
 {
   MY_DEBUGDEVICE.println("Sending initial light led status");
-  send(msgLightLED.set(lastLightLEDStatus));
+  send(msgLightLED.setSensor(LIGHT_LED_ID).set(lastLightLEDStatus,1));
   MY_DEBUGDEVICE.println("Requesting initial light led status from controller");
   request(LIGHT_LED_ID, V_STATUS);
   wait(WAIT_VALUE, C_SET, V_STATUS);
