@@ -27,6 +27,11 @@
  * http://www.mysensors.org/build/relay
  */
 
+///////////////Version info
+#ifndef VERSION_FROM_GIT
+#define VERSION_FROM_GIT UNKNOWN
+#endif
+
 /***************Debug Enable*************************************************/
 // Enable debug prints to serial monitor
 #define   MY_DEBUG
@@ -73,14 +78,14 @@
 #define LIGHT_SENSOR_ID        3
 #define LIGHT_LED_ID           4
 #define TEMP_I2C_ADDR          0x18
-#define WAIT_VALUE             3000
+#define WAIT_VALUE             3000   // 1000 = 1 second
 bool initialTempValueSent    = false;
 bool initialLightValueSent   = false;
 bool initialLightLEDValueSent= false;
 int lastLightLEDStatus       = 0;
 float lastTemp               = 0.0;
 float lastLightPct           = 0.0;
-const long loopInterval      = 30000; // 1000 = 1 second, 300000 = 5min
+const long loopInterval      = 300000; // 1000 = 1 second, 300000 = 5min
 unsigned long previousMillis = 0;
 
 MyMessage msgTemp(TEMP_SENSOR_ID, V_TEMP);
@@ -107,7 +112,7 @@ void setup()
 void presentation()
 {
 	// Send the sketch version information to the gateway and Controller
-  sendSketchInfo("shop-rfm95", "0.3.0");
+  sendSketchInfo("shop-rfm95", "VERSION_FROM_GIT");
   present(TEMP_SENSOR_ID, S_TEMP);
   present(LIGHT_SENSOR_ID, S_LIGHT_LEVEL);
   present(LIGHT_LED_ID, S_BINARY);
