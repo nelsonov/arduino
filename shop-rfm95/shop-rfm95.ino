@@ -28,6 +28,7 @@
  */
 
 ///////////////Version info
+#include "version-from-git.h"
 #ifndef VERSION_FROM_GIT
 #define VERSION_FROM_GIT UNKNOWN
 #endif
