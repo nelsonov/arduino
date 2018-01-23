@@ -22,7 +22,6 @@
  * Version 1.0 - Henrik EKblad
  * Contribution by a-lurker and Anticimex,
  * Contribution by Norbert Truchsess <norbert.truchsess@t-online.de>
- * Contribution by Ivo Pullens (ESP8266 support)
  *
  /***************nRF24***********************/
 // Default Pinout
@@ -36,8 +35,8 @@
 //    2  <-->   IRQ
 #define   MY_RADIO_RF24
 #define   MY_RADIO_NRF24
-//#define   MY_RF24_CE_PIN  5
-//#define   MY_RF24_CS_PIN  6
+#define   MY_RF24_CE_PIN  5
+#define   MY_RF24_CS_PIN  6
 //#define   MY_RF24_IRQ_PIN     // OPTIONAL
 //#define   MY_RF24_POWER_PIN   // OPTIONAL
 //#define   MY_RF24_CHANNEL     // OPTIONAL
@@ -46,7 +45,7 @@
 #define   MY_DEBUG_VERBOSE_RF24
 /**********END nRF24*************************/
 
-  * Inclusion mode button:
+/* Inclusion mode button:
  * - Connect GPIO5 via switch to GND ('inclusion switch')
  *
  * Hardware SHA204 signing is currently not supported!
@@ -60,41 +59,6 @@
 
 // Use a bit lower baudrate for serial prints on ESP8266 than default in MyConfig.h
 #define MY_BAUD_RATE 9600
-
-// Enables and select radio type (if attached)
-#define MY_RADIO_NRF24
-//#define MY_RADIO_RFM69
-//#define MY_RF24_CE_PIN 49
-//#define MY_RF24_CS_PIN 53
-
-//#define MY_GATEWAY_ESP8266
-
-//#define MY_ESP8266_SSID "nelnet"
-//#define MY_ESP8266_PASSWORD "56seven8"
-
-// Enable UDP communication
-//#define MY_USE_UDP
-
-// Set the hostname for the WiFi Client. This is the hostname
-// it will pass to the DHCP server if not static
-//#define MY_ESP8266_HOSTNAME "sensor-gateway"
-
-// Enable MY_IP_ADDRESS here if you want a static ip address (no DHCP)
-//#define MY_IP_ADDRESS 192,168,178,87
-
-// If using static ip you need to define Gateway and Subnet address as well
-//#define MY_IP_GATEWAY_ADDRESS 192,168,178,1
-//#define MY_IP_SUBNET_ADDRESS 255,255,255,0
-
-// The port to keep open on node server mode
-//#define MY_PORT 5003
-
-// How many clients should be able to connect to this gateway (default 1)
-//#define MY_GATEWAY_MAX_CLIENTS 2
-
-// Controller ip address. Enables client mode (default is "server" mode).
-// Also enable this if MY_USE_UDP is used and you want sensor data sent somewhere.
-//#define MY_CONTROLLER_IP_ADDRESS 192, 168, 178, 68
 
 // Enable inclusion mode
 //#define MY_INCLUSION_MODE_FEATURE
