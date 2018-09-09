@@ -42,7 +42,7 @@
 //#define   MY_RF24_CHANNEL     // OPTIONAL
 //#define   MY_RF24_DATARATE    // OPTIONAL
 #define   MY_RF24_SPI_SPEED   (2*1000000ul)
-#define   MY_DEBUG_VERBOSE_RF24
+//#define   MY_DEBUG_VERBOSE_RF24
 /**********END nRF24*************************/
 
 /* Inclusion mode button:
