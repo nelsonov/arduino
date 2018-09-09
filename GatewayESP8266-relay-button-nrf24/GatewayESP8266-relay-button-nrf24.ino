@@ -19,6 +19,7 @@
  *******************************
  *
  * REVISION HISTORY
+ * 
  * Version 1.0 - Henrik EKblad
  * Contribution by a-lurker and Anticimex,
  * Contribution by Norbert Truchsess <norbert.truchsess@t-online.de>
@@ -75,8 +76,8 @@
 // Enables and select radio type (if attached)
 #define MY_RADIO_NRF24
 //#define MY_RADIO_RFM69
-#define MY_RF24_CE_PIN 5  //  Board pin 16  IO 1
-#define MY_RF24_CS_PIN 4  //  Board pin 15  IO 3
+//#define MY_RF24_CE_PIN 5  //  Board pin 16  IO 1
+//#define MY_RF24_CS_PIN 4  //  Board pin 15  IO 3
 
 #define MY_GATEWAY_ESP8266
 
