@@ -66,18 +66,30 @@
  * Make sure to fill in your ssid and WiFi password below for ssid & pass.
  */
 
-
+/***************Debug Enable*************************************************/
 // Enable debug prints to serial monitor
 #define MY_DEBUG
-
 // Use a bit lower baudrate for serial prints on ESP8266 than default in MyConfig.h
 #define MY_BAUD_RATE 9600
+#define   MY_DEBUG_VERBOSE_TRANSPORT
+//#define   WITHOUT_CONTROLLER     // Temporary kludge during debugging
+/***************End Debug Enable*********************************************/
 
+/***************Radio********************************************************/
 // Enables and select radio type (if attached)
-#define MY_RADIO_NRF24
+//#define MY_RADIO_NRF24
 //#define MY_RADIO_RFM69
 //#define MY_RF24_CE_PIN 5  //  Board pin 16  IO 1
 //#define MY_RF24_CS_PIN 4  //  Board pin 15  IO 3
+#define   MY_RADIO_RFM95
+#define   MY_RFM95_FREQUENCY RFM95_915MHZ
+//#define   MY_RFM95_IRQ_PIN  2  // library 2.2 beta = GPIO 2
+//#define   MY_RFM95_IRQ_NUM  0  // library 2.2 beta
+//#define   MY_RFM95_RST_PIN  5  // library 2.2 beta
+//#define   MY_RFM95_CS_PIN   6  // library 2.2 beta
+#define   MY_DEBUG_VERBOSE_RFM95
+/****************End Radio****************************************************/
+
 
 #define MY_GATEWAY_ESP8266
 
@@ -89,7 +101,7 @@
 
 // Set the hostname for the WiFi Client. This is the hostname
 // it will pass to the DHCP server if not static
-#define MY_HOSTNAME "sensor-gateway"
+#define   MY_HOSTNAME "rfm95-gateway"
 
 // Enable MY_IP_ADDRESS here if you want a static ip address (no DHCP)
 //#define MY_IP_ADDRESS 192,168,178,87
@@ -143,7 +155,7 @@ void setup()
 
 void presentation()
 {
-  sendSketchInfo("GatewayESP8266-nrf24", "0.1");
+  sendSketchInfo("GatewayESP8266-rfm95", "0.1");
 }
 
 
