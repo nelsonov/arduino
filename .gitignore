@@ -1,2 +1,7 @@
-build/
+secrets.h
+build/**
+!build/.gitkeep
 *~
+*elf
+*bin
+*hex
