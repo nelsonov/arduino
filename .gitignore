@@ -1,6 +1,11 @@
 secrets.h
-build/
-!.gitkeep
+build/**
+!build/**/
+!build/
+!build/.gitkeep
+!**/build/
+!**/build/.gitkeep
+**/build/**
 *~
 *elf
 *bin
