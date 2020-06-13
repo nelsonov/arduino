@@ -104,21 +104,20 @@
 // Enable UDP communication
 //#define MY_USE_UDP
 
-// Set the hostname for the WiFi Client. This is the hostname
-// it will pass to the DHCP server if not static
-#define   MY_HOSTNAME "rfm95-gateway"
-
 // **************
 // Definded in secrets.h
+// Set the hostname for the WiFi Client. This is the hostname
+// it will pass to the DHCP server if not static
+//#define   MY_HOSTNAME "rfm95-gateway"
+
 // Enable MY_IP_ADDRESS here if you want a static ip address (no DHCP)
 //#define MY_IP_ADDRESS 192,168,178,87
 // If using static ip you need to define Gateway and Subnet address as well
 //#define MY_IP_GATEWAY_ADDRESS 192,168,178,1
 //#define MY_IP_SUBNET_ADDRESS 255,255,255,0
-// **************
-
 // The port to keep open on node server mode
-#define MY_PORT 5003
+//#define MY_PORT 5003
+// **************
 
 // How many clients should be able to connect to this gateway (default 1)
 #define MY_GATEWAY_MAX_CLIENTS 2
@@ -162,7 +161,7 @@ void setup()
 
 void presentation()
 {
-  sendSketchInfo("GatewayESP8266-rfm95", "0.2");
+  sendSketchInfo("GatewayESP8266-rfm95", "0.4");
 }
 
 
