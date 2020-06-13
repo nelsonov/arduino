@@ -66,6 +66,8 @@
  * Make sure to fill in your ssid and WiFi password below for ssid & pass.
  */
 
+#include "secrets.h"
+
 /***************Debug Enable*************************************************/
 // Enable debug prints to serial monitor
 #define MY_DEBUG
@@ -83,6 +85,9 @@
 //#define MY_RF24_CS_PIN 4  //  Board pin 15  IO 3
 #define   MY_RADIO_RFM95
 #define   MY_RFM95_FREQUENCY RFM95_915MHZ
+#define MY_RFM95_IRQ_PIN D1
+#define MY_RFM95_IRQ_NUM MY_RFM95_IRQ_PIN
+#define MY_RFM95_CS_PIN D8
 //#define   MY_RFM95_IRQ_PIN  2  // library 2.2 beta = GPIO 2
 //#define   MY_RFM95_IRQ_NUM  0  // library 2.2 beta
 //#define   MY_RFM95_RST_PIN  5  // library 2.2 beta
@@ -93,8 +98,8 @@
 
 #define MY_GATEWAY_ESP8266
 
-#define MY_WIFI_SSID "nelnet"
-#define MY_WIFI_PASSWORD "56seven8"
+//#define MY_WIFI_SSID "nelnet" // included from secrets.h
+//#define MY_WIFI_PASSWORD "56seven8" // included from secrets.h
 
 // Enable UDP communication
 //#define MY_USE_UDP
@@ -103,12 +108,14 @@
 // it will pass to the DHCP server if not static
 #define   MY_HOSTNAME "rfm95-gateway"
 
+// **************
+// Definded in secrets.h
 // Enable MY_IP_ADDRESS here if you want a static ip address (no DHCP)
 //#define MY_IP_ADDRESS 192,168,178,87
-
 // If using static ip you need to define Gateway and Subnet address as well
 //#define MY_IP_GATEWAY_ADDRESS 192,168,178,1
 //#define MY_IP_SUBNET_ADDRESS 255,255,255,0
+// **************
 
 // The port to keep open on node server mode
 #define MY_PORT 5003
@@ -155,7 +162,7 @@ void setup()
 
 void presentation()
 {
-  sendSketchInfo("GatewayESP8266-rfm95", "0.1");
+  sendSketchInfo("GatewayESP8266-rfm95", "0.2");
 }
 
 

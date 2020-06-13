@@ -14,14 +14,14 @@
 # Per Project settings:
 PORT = /dev/ttyUSB0
 PROJECT = GatewayESP8266-rfm95
-PROJECTBASE = /srv/src/Arduino/git
+PROJECTBASE = /srv/src/Arduino/git/GatewayESP8266-rfm95
 FBQN = esp8266:esp8266:nodemcuv2
 UPLOADSPEED=57600
 #
 # The following shouldn't need changes
-SRCBASE = $(PROJECTBASE)/$(PROJECT)/$(PROJECT)
-BUILD = $(PROJECTBASE)/$(PROJECT)/build
-HEX = $(PROJECT).ino.hex
+SRCBASE = $(PROJECTBASE)/$(PROJECT)/
+BUILD = $(PROJECTBASE)/build
+HEX = $(BUILD).ino.bin
 
 CMD = arduino-cli
 COMPILE = $(CMD) compile
@@ -29,7 +29,7 @@ UPLOAD = $(CMD) upload
 
 build : $(HEX)
 
-$(HEX) : $(SRCBASE)/*.ino
+$(HEX) : $(SRCBASE)/*.ino $(SRCBASE)/*.h
 	$(COMPILE) --verbose --build-path $(BUILD) \
 	--fqbn $(FBQN) $(PROJECT)
 
